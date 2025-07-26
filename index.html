@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FleetTrack - Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        line-height: 1.6;
+      }
+
+      .container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        padding: 2rem 0;
+      }
+
+      .logo {
+        padding: 0 2rem 2rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 2rem;
+      }
+
+      .logo h1 {
+        color: #3b82f6;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .nav-menu {
+        list-style: none;
+      }
+
+      .nav-item {
+        margin-bottom: 0.25rem;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 2rem;
+        color: #64748b;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: #eff6ff;
+        color: #3b82f6;
+        border-right: 3px solid #3b82f6;
+      }
+
+      .nav-link i {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 2rem;
+      }
+
+      .header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .header h1 {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      /* Stats Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .stat-title {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .stat-icon.blue {
+        background: #dbeafe;
+        color: #3b82f6;
+      }
+      .stat-icon.green {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .stat-icon.orange {
+        background: #fed7aa;
+        color: #ea580c;
+      }
+      .stat-icon.red {
+        background: #fecaca;
+        color: #dc2626;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-change {
+        font-size: 0.875rem;
+        color: #16a34a;
+      }
+
+      /* Content Sections */
+      .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+      }
+
+      .section {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+      }
+
+      .section-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #2563eb;
+      }
+
+      .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+      }
+
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      /* Map Container */
+      .map-container {
+        height: 400px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        position: relative;
+      }
+
+      .map-placeholder {
+        text-align: center;
+      }
+
+      /* Activity Feed */
+      .activity-list {
+        padding: 1.5rem;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .activity-content {
+        flex: 1;
+      }
+
+      .activity-title {
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+      }
+
+      .activity-time {
+        font-size: 0.875rem;
+        color: #64748b;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          padding: 1rem 0;
+        }
+
+        .nav-menu {
+          display: flex;
+          overflow-x: auto;
+          padding: 0 1rem;
+        }
+
+        .nav-item {
+          margin-bottom: 0;
+          margin-right: 1rem;
+        }
+
+        .nav-link {
+          white-space: nowrap;
+          padding: 0.5rem 1rem;
+        }
+
+        .main-content {
+          padding: 1rem;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">
+          <h1>FleetTrack</h1>
+        </div>
+        <nav>
+          <ul class="nav-menu">
+            <li class="nav-item">
+              <a href="#" class="nav-link active">
+                <i data-feather="home"></i>
+                Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="map"></i>
+                Live Tracking
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="truck"></i>
+                Trip Management
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="users"></i>
+                Driver Management
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="bar-chart-2"></i>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="bell"></i>
+                Notifications
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i data-feather="settings"></i>
+                Settings
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="header">
+          <h1>Dashboard</h1>
+          <div class="user-info">
+            <div class="user-avatar">A</div>
+            <div>
+              <div style="font-weight: 500">Admin User</div>
+              <div style="font-size: 0.875rem; color: #64748b">
+                Administrator
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Active Drivers</div>
+              <div class="stat-icon blue">
+                <i data-feather="users"></i>
+              </div>
+            </div>
+            <div class="stat-value">24</div>
+            <div class="stat-change">+2 from yesterday</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Trips in Progress</div>
+              <div class="stat-icon orange">
+                <i data-feather="truck"></i>
+              </div>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-change">6 starting soon</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Completed Today</div>
+              <div class="stat-icon green">
+                <i data-feather="check-circle"></i>
+              </div>
+            </div>
+            <div class="stat-value">47</div>
+            <div class="stat-change">+12% from yesterday</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Delayed Trips</div>
+              <div class="stat-icon red">
+                <i data-feather="clock"></i>
+              </div>
+            </div>
+            <div class="stat-value">3</div>
+            <div class="stat-change">-2 from yesterday</div>
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+          <!-- Live Map -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Live Driver Locations</h2>
+              <a href="#" class="btn btn-secondary">
+                <i data-feather="maximize-2"></i>
+                Full Screen
+              </a>
+            </div>
+            <div class="map-container">
+              <div class="map-placeholder">
+                <i
+                  data-feather="map"
+                  style="width: 48px; height: 48px; margin-bottom: 1rem"
+                ></i>
+                <div>Interactive map showing live driver locations</div>
+                <div style="font-size: 0.875rem; margin-top: 0.5rem">
+                  Click "Full Screen" to view detailed map
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Recent Activities -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Recent Activities</h2>
+              <a href="#" class="btn btn-primary">
+                <i data-feather="plus"></i>
+                New Trip
+              </a>
+            </div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-icon green">
+                  <i data-feather="check" style="width: 16px; height: 16px"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">Trip #TR001 completed</div>
+                  <div class="activity-time">
+                    Driver: John Doe • 5 minutes ago
+                  </div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-icon blue">
+                  <i data-feather="play" style="width: 16px; height: 16px"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">Trip #TR045 started</div>
+                  <div class="activity-time">
+                    Driver: Sarah Smith • 12 minutes ago
+                  </div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-icon orange">
+                  <i
+                    data-feather="user-plus"
+                    style="width: 16px; height: 16px"
+                  ></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">New driver registered</div>
+                  <div class="activity-time">Mike Johnson • 1 hour ago</div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-icon red">
+                  <i
+                    data-feather="alert-circle"
+                    style="width: 16px; height: 16px"
+                  ></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">Trip #TR032 delayed</div>
+                  <div class="activity-time">
+                    Driver: Alex Brown • 2 hours ago
+                  </div>
+                </div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-icon green">
+                  <i data-feather="check" style="width: 16px; height: 16px"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">Trip #TR028 completed</div>
+                  <div class="activity-time">
+                    Driver: Emma Wilson • 3 hours ago
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize Feather icons
+      feather.replace();
+
+      // Simulate real-time updates
+      function updateStats() {
+        const stats = document.querySelectorAll(".stat-value");
+        stats[1].textContent = Math.floor(Math.random() * 20) + 5; // Trips in progress
+      }
+
+      // Update stats every 30 seconds
+      setInterval(updateStats, 30000);
+
+      // Add click handlers for navigation
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          document
+            .querySelectorAll(".nav-link")
+            .forEach((l) => l.classList.remove("active"));
+          link.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
